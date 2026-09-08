@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <header>
+        <h1>My Portfolio</h1>
+        <nav>
+            <a href="#home"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#about"><i class="fa-solid fa-user"></i> About</a>
+            <a href="#skills"><i class="fa-solid fa-code"></i> Skills</a>
+            <a href="#projects"><i class="fa-solid fa-briefcase"></i> Projects</a>
+            <a href="#contact"><i class="fa-solid fa-envelope"></i> Contact</a>
+            <a href="gallery.html" class="btn"><i class="fas fa-images"></i> Add Images</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section">
+            <div class="home-text">
+                <h2>Hi, I'm <span>Ragul G</span></h2>
+                <p>I'm a Web Developer</p>
+            </div>
+
+            <!-- Profile & Side Box Container -->
+            <div class="hero-content">
+                <!-- Left: Profile & Centered Edit Button -->
+                <div class="profile-wrapper">
+                    <div class="profile-container">
+                        <img src="profile.jpg" alt="Ragul G" class="profile-img" id="main-photo">
+                    </div>
+                    
+                    <button class="edit-btn" onclick="document.getElementById('profile-upload').click()">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                    </button>
+                    <input type="file" id="profile-upload" accept="image/*" style="display: none;" onchange="changeProfilePic(event)">
+                </div>
+
+                <!-- Right: Side Animated Glow Box -->
+                <div class="animated-box">
+                    <h3><i class="fa-solid fa-rocket"></i> Passionate Developer</h3>
+                    <p>Creating responsive, modern, and high-performance web applications with custom animations and clean code.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About Me</h2>
+            <p>I'm a Web Developer interested in building modern and useful websites.</p>
+        </section>
+
+        <section id="skills">
+            <h2>My Skills</h2>
+            <ul>
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>React.js</li>
+                <li>Node.js</li>
+            </ul>
+        </section>
+
+        <section id="projects">
+            <h2>My Projects</h2>
+            <div>
+                <h3>Project 1</h3>
+                <p>My first web project.</p>
+            </div>
+            <div>
+                <h3>Project 2</h3>
+                <p>My second web project.</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Me</h2>
+            <p>Email: r96213306@gmail.com</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 My Portfolio</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

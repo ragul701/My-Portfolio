@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Gallery - Portfolio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    /* Header & Navigation Styles (Same UI as index.html) */
+    header {
+      text-align: center;
+      padding: 20px 0 10px;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: #00f2fe;
+      margin-bottom: 15px;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px;
+      backdrop-filter: blur(10px);
+      width: 90%;
+      max-width: 500px;
+      margin: 0 auto 30px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+      border-radius: 15px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background: #00f2fe;
+      color: #000;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    /* Upload Controls */
+    .upload-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px dashed #00f2fe;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+    }
+
+    .upload-box input[type="file"] {
+      display: none;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 10px 20px;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      color: white;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    .custom-file-upload:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 15px;
+    }
+
+    .img-card {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      aspect-ratio: 1 / 1;
+    }
+
+    .img-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(255, 0, 0, 0.8);
+      color: white;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-text {
+      color: #888;
+      grid-column: 1 / -1;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with Navigation (Same UI) -->
+  <header>
+    <h1>My Portfolio</h1>
+    <nav>
+      <a href="index.html#home"><i class="fas fa-home"></i> Home</a>
+      <a href="index.html#about"><i class="fas fa-user"></i> About</a>
+      <a href="index.html#skills"><i class="fas fa-code"></i> Skills</a>
+      <a href="index.html#projects"><i class="fas fa-briefcase"></i> Projects</a>
+      <a href="index.html#contact"><i class="fas fa-envelope"></i> Contact</a>
+    </nav>
+  </header>
+
+  <!-- Gallery Main Section -->
+  <div class="container">
+    <h2 class="page-title"><i class="fas fa-images"></i> Image Gallery</h2>
+
+    <!-- File Upload Option -->
+    <div class="upload-box">
+      <label for="imageInput" class="custom-file-upload">
+        <i class="fas fa-plus"></i> Choose & Add Images
+      </label>
+      <input type="file" id="imageInput" accept="image/*" multiple>
+    </div>
+
+    <!-- Uploaded Images Display Area -->
+    <div class="gallery-grid" id="galleryGrid">
+      <p class="empty-text" id="emptyText">No images added yet.</p>
+    </div>
+  </div>
+
+  <!-- JavaScript logic to manage image upload & display -->
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const galleryGrid = document.getElementById('galleryGrid');
+    const emptyText = document.getElementById('emptyText');
+
+    // Page Load aagum podhu LocalStorage-la irunthu saved images-a fetch panrom
+    document.addEventListener('DOMContentLoaded', loadSavedImages);
+
+    imageInput.addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const base64Image = event.target.result;
+          saveImageToStorage(base64Image);
+          renderImage(base64Image);
+        };
+        reader.readAsDataURL(file);
+      });
+      imageInput.value = ''; // Reset input
+    });
+
+    function renderImage(src) {
+      if (emptyText) emptyText.style.display = 'none';
+
+      const card = document.createElement('div');
+      card.className = 'img-card';
+
+      const img = document.createElement('img');
+      img.src = src;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'delete-btn';
+      deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
+      deleteBtn.onclick = function() {
+        card.remove();
+        deleteImageFromStorage(src);
+        checkEmpty();
+      };
+
+      card.appendChild(img);
+      card.appendChild(deleteBtn);
+      galleryGrid.appendChild(card);
+    }
+
+    function saveImageToStorage(src) {
+      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
+      images.push(src);
+      localStorage.setItem('my_gallery_images', JSON.stringify(images));
+    }
+
+    function loadSavedImages() {
+      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
+      if (images.length > 0) {
+        if (emptyText) emptyText.style.display = 'none';
+        images.forEach(src => renderImage(src));
+      }
+    }
+
+    function deleteImageFromStorage(src) {
+      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
+      images = images.filter(img => img !== src);
+      localStorage.setItem('my_gallery_images', JSON.stringify(images));
+    }
+
+    function checkEmpty() {
+      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
+      if (images.length === 0 && emptyText) {
+        emptyText.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>
