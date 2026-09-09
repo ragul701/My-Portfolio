@@ -3,14 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Portfolio</title>
+   
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
     <header>
-        <h1>My Portfolio</h1>
+        <div class="logo-badge">
+            <svg class="mono-spark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="sparkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8b5cf6" />
+                        <stop offset="100%" stop-color="#06b6d4" />
+                    </linearGradient>
+                </defs>
+                <path d="M21 2 L9 22 H18 L16 38 L32 16 H22 L21 2 Z"
+                      fill="url(#sparkGrad)" stroke="url(#sparkGrad)" stroke-width="1.5" stroke-linejoin="round" />
+            </svg>
+            <div class="logo-text">
+                <span class="logo-name">Ragul G</span>
+                <span class="logo-role">Developer</span>
+            </div>
+        </div>
         <nav>
             <a href="#home"><i class="fa-solid fa-house"></i> Home</a>
             <a href="#about"><i class="fa-solid fa-user"></i> About</a>
@@ -25,7 +40,7 @@
         <section id="home" class="hero-section">
             <div class="home-text">
                 <h2>Hi, I'm <span>Ragul G</span></h2>
-                <p>I'm a Web Developer</p>
+              
             </div>
 
             <!-- Profile & Side Box Container -->
@@ -42,10 +57,98 @@
                     <input type="file" id="profile-upload" accept="image/*" style="display: none;" onchange="changeProfilePic(event)">
                 </div>
 
-                <!-- Right: Side Animated Glow Box -->
-                <div class="animated-box">
-                    <h3><i class="fa-solid fa-rocket"></i> Passionate Developer</h3>
-                    <p>Creating responsive, modern, and high-performance web applications with custom animations and clean code.</p>
+                <!-- Right: Click-arrow to reveal side flyout -->
+                <div class="info-grid">
+                    <div class="info-chip">
+                        <i class="fa-solid fa-id-badge"></i>
+                        <span class="info-label">Name</span>
+                        <button class="chip-arrow" aria-label="Show Name" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">Ragul G</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-cake-candles"></i>
+                        <span class="info-label">Age</span>
+                        <button class="chip-arrow" aria-label="Show Age" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">24</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-droplet"></i>
+                        <span class="info-label">Blood Group</span>
+                        <button class="chip-arrow" aria-label="Show Blood Group" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">'A'Positive</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span class="info-label">Location</span>
+                        <button class="chip-arrow" aria-label="Show Location" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">Tamil Nadu, India</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-envelope"></i>
+                        <span class="info-label">Email</span>
+                        <button class="chip-arrow" aria-label="Show Email" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">r96213306@gmail.com</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-rocket"></i>
+                        <span class="info-label">Role</span>
+                        <button class="chip-arrow" aria-label="Show Role" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">Web Developer</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-id-card"></i>
+                        <span class="info-label">Qualification</span>
+                        <button class="chip-arrow" aria-label="Show Aadhar No" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">BSC INFORMATION TECHNOLOGY</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-phone"></i>
+                        <span class="info-label">Phone</span>
+                        <button class="chip-arrow" aria-label="Show Phone" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">+91 8807239224</div>
+                    </div>
+
+                 
+                    <div class="info-chip">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span class="info-label">Date of Birth</span>
+                        <button class="chip-arrow" aria-label="Show Date of Birth" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">09 / 09 / 2002</div>
+                    </div>
+
+                    <div class="info-chip">
+                        <i class="fa-solid fa-house"></i>
+                        <span class="info-label">Address</span>
+                        <button class="chip-arrow" aria-label="Show Address" type="button">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                        <div class="chip-flyout">M.Pannaipatty,Rajakkapattty(po),Indracolony,Dindigul</div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -89,5 +192,29 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        document.querySelectorAll('.chip-arrow').forEach(function (arrow) {
+            arrow.addEventListener('click', function () {
+                var chip = arrow.closest('.info-chip');
+                var wasActive = chip.classList.contains('active');
+
+                document.querySelectorAll('.info-chip.active').forEach(function (c) {
+                    c.classList.remove('active');
+                });
+
+                if (!wasActive) {
+                    chip.classList.add('active');
+                }
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.info-chip')) {
+                document.querySelectorAll('.info-chip.active').forEach(function (c) {
+                    c.classList.remove('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -20,7 +20,6 @@
       min-height: 100vh;
     }
 
-    /* Header & Navigation Styles (Same UI as index.html) */
     header {
       text-align: center;
       padding: 20px 0 10px;
@@ -61,7 +60,6 @@
       color: #000;
     }
 
-    /* Main Container */
     .container {
       max-width: 800px;
       margin: 0 auto;
@@ -74,7 +72,6 @@
       margin-bottom: 20px;
     }
 
-    /* Upload Controls */
     .upload-box {
       background: rgba(255, 255, 255, 0.05);
       border: 2px dashed #00f2fe;
@@ -103,7 +100,13 @@
       box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
     }
 
-    /* Gallery Grid */
+    .upload-status {
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: #9fdcff;
+      min-height: 18px;
+    }
+
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -117,6 +120,13 @@
       border: 2px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       aspect-ratio: 1 / 1;
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .img-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 242, 254, 0.5);
     }
 
     .img-card img {
@@ -141,6 +151,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 2;
     }
 
     .empty-text {
@@ -148,11 +159,103 @@
       grid-column: 1 / -1;
       padding: 20px;
     }
+
+    /* ================= LIGHTBOX (full view) ================= */
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(0, 0, 0, 0.88);
+      backdrop-filter: blur(6px);
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox-overlay img {
+      max-width: 90vw;
+      max-height: 85vh;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox-overlay.active img {
+      transform: scale(1);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 22px;
+      right: 28px;
+
+      width: 42px;
+      height: 42px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 0, 0, 0.7);
+      transform: rotate(90deg);
+    }
+
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+
+      width: 46px;
+      height: 46px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .lightbox-nav:hover {
+      background: rgba(0, 242, 254, 0.5);
+    }
+
+    .lightbox-prev { left: 24px; }
+    .lightbox-next { right: 24px; }
   </style>
 </head>
 <body>
 
-  <!-- Header with Navigation (Same UI) -->
   <header>
     <h1>My Portfolio</h1>
     <nav>
@@ -164,63 +267,176 @@
     </nav>
   </header>
 
-  <!-- Gallery Main Section -->
   <div class="container">
     <h2 class="page-title"><i class="fas fa-images"></i> Image Gallery</h2>
 
-    <!-- File Upload Option -->
     <div class="upload-box">
       <label for="imageInput" class="custom-file-upload">
         <i class="fas fa-plus"></i> Choose & Add Images
       </label>
       <input type="file" id="imageInput" accept="image/*" multiple>
+      <div class="upload-status" id="uploadStatus"></div>
     </div>
 
-    <!-- Uploaded Images Display Area -->
     <div class="gallery-grid" id="galleryGrid">
       <p class="empty-text" id="emptyText">No images added yet.</p>
     </div>
   </div>
 
-  <!-- JavaScript logic to manage image upload & display -->
+  <!-- Lightbox (full view on click) -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <img id="lightboxImg" src="" alt="Full view">
+    <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
   <script>
-    const imageInput = document.getElementById('imageInput');
-    const galleryGrid = document.getElementById('galleryGrid');
-    const emptyText = document.getElementById('emptyText');
+    const imageInput   = document.getElementById('imageInput');
+    const galleryGrid  = document.getElementById('galleryGrid');
+    const emptyText    = document.getElementById('emptyText');
+    const uploadStatus = document.getElementById('uploadStatus');
 
-    // Page Load aagum podhu LocalStorage-la irunthu saved images-a fetch panrom
-    document.addEventListener('DOMContentLoaded', loadSavedImages);
+    const lightboxOverlay = document.getElementById('lightboxOverlay');
+    const lightboxImg     = document.getElementById('lightboxImg');
+    const lightboxClose   = document.getElementById('lightboxClose');
+    const lightboxPrev    = document.getElementById('lightboxPrev');
+    const lightboxNext    = document.getElementById('lightboxNext');
 
-    imageInput.addEventListener('change', function(e) {
-      const files = Array.from(e.target.files);
+    let currentImages = [];   // [{id, src}] in display order
+    let currentIndex  = -1;
 
-      files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          const base64Image = event.target.result;
-          saveImageToStorage(base64Image);
-          renderImage(base64Image);
+    /* ============ IndexedDB setup (replaces localStorage, no size-limit issue) ============ */
+    const DB_NAME    = 'portfolio_gallery_db';
+    const STORE_NAME = 'images';
+    let dbInstance   = null;
+
+    function openDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+
+        request.onupgradeneeded = function (e) {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+          }
         };
-        reader.readAsDataURL(file);
+
+        request.onsuccess = function (e) {
+          dbInstance = e.target.result;
+          resolve(dbInstance);
+        };
+
+        request.onerror = function (e) {
+          reject(e.target.error);
+        };
       });
+    }
+
+    function addImageToDB(src) {
+      return new Promise((resolve, reject) => {
+        const tx    = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req   = store.add({ src: src });
+
+        req.onsuccess = function (e) { resolve(e.target.result); };
+        req.onerror   = function (e) { reject(e.target.error); };
+      });
+    }
+
+    function getAllImagesFromDB() {
+      return new Promise((resolve, reject) => {
+        const tx    = dbInstance.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req   = store.getAll();
+
+        req.onsuccess = function (e) { resolve(e.target.result); };
+        req.onerror   = function (e) { reject(e.target.error); };
+      });
+    }
+
+    function deleteImageFromDB(id) {
+      return new Promise((resolve, reject) => {
+        const tx    = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req   = store.delete(id);
+
+        req.onsuccess = function () { resolve(); };
+        req.onerror   = function (e) { reject(e.target.error); };
+      });
+    }
+
+    /* ============ Init ============ */
+    document.addEventListener('DOMContentLoaded', async function () {
+      try {
+        await openDB();
+        await loadSavedImages();
+      } catch (err) {
+        console.error('Gallery DB error:', err);
+        uploadStatus.textContent = 'Storage unavailable in this browser.';
+      }
+    });
+
+    imageInput.addEventListener('change', async function (e) {
+      const files = Array.from(e.target.files);
+      if (files.length === 0) return;
+
+      uploadStatus.textContent = `Adding ${files.length} image(s)...`;
+
+      for (const file of files) {
+        await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = async function (event) {
+            const base64Image = event.target.result;
+            try {
+              const id = await addImageToDB(base64Image);
+              renderImage({ id: id, src: base64Image });
+            } catch (err) {
+              console.error('Could not save image:', err);
+            }
+            resolve();
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      uploadStatus.textContent = 'All images added.';
+      setTimeout(() => { uploadStatus.textContent = ''; }, 2000);
       imageInput.value = ''; // Reset input
     });
 
-    function renderImage(src) {
+    function renderImage(item) {
       if (emptyText) emptyText.style.display = 'none';
+
+      currentImages.push(item);
 
       const card = document.createElement('div');
       card.className = 'img-card';
+      card.dataset.id = item.id;
 
       const img = document.createElement('img');
-      img.src = src;
+      img.src = item.src;
+      img.loading = 'lazy';
+
+      card.addEventListener('click', function () {
+        const idx = currentImages.findIndex((i) => i.id === item.id);
+        openLightbox(idx);
+      });
 
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'delete-btn';
       deleteBtn.innerHTML = '<i class="fas fa-times"></i>';
-      deleteBtn.onclick = function() {
+      deleteBtn.onclick = async function (e) {
+        e.stopPropagation(); // don't trigger the lightbox
         card.remove();
-        deleteImageFromStorage(src);
+        await deleteImageFromDB(item.id);
+        currentImages = currentImages.filter((i) => i.id !== item.id);
         checkEmpty();
       };
 
@@ -229,32 +445,60 @@
       galleryGrid.appendChild(card);
     }
 
-    function saveImageToStorage(src) {
-      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
-      images.push(src);
-      localStorage.setItem('my_gallery_images', JSON.stringify(images));
-    }
-
-    function loadSavedImages() {
-      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
+    async function loadSavedImages() {
+      const images = await getAllImagesFromDB();
       if (images.length > 0) {
         if (emptyText) emptyText.style.display = 'none';
-        images.forEach(src => renderImage(src));
+        images.forEach((item) => renderImage(item));
       }
-    }
-
-    function deleteImageFromStorage(src) {
-      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
-      images = images.filter(img => img !== src);
-      localStorage.setItem('my_gallery_images', JSON.stringify(images));
     }
 
     function checkEmpty() {
-      let images = JSON.parse(localStorage.getItem('my_gallery_images')) || [];
-      if (images.length === 0 && emptyText) {
+      if (currentImages.length === 0 && emptyText) {
         emptyText.style.display = 'block';
       }
     }
+
+    /* ============ Lightbox (click any image for full view) ============ */
+    function openLightbox(index) {
+      if (index < 0 || index >= currentImages.length) return;
+      currentIndex = index;
+      lightboxImg.src = currentImages[currentIndex].src;
+      lightboxOverlay.classList.add('active');
+    }
+
+    function closeLightbox() {
+      lightboxOverlay.classList.remove('active');
+    }
+
+    function showNext() {
+      if (currentImages.length === 0) return;
+      currentIndex = (currentIndex + 1) % currentImages.length;
+      lightboxImg.src = currentImages[currentIndex].src;
+    }
+
+    function showPrev() {
+      if (currentImages.length === 0) return;
+      currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+      lightboxImg.src = currentImages[currentIndex].src;
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxNext.addEventListener('click', showNext);
+    lightboxPrev.addEventListener('click', showPrev);
+
+    // click outside the image (on the dark backdrop) closes it
+    lightboxOverlay.addEventListener('click', function (e) {
+      if (e.target === lightboxOverlay) closeLightbox();
+    });
+
+    // keyboard support
+    document.addEventListener('keydown', function (e) {
+      if (!lightboxOverlay.classList.contains('active')) return;
+      if (e.key === 'Escape')      closeLightbox();
+      if (e.key === 'ArrowRight')  showNext();
+      if (e.key === 'ArrowLeft')   showPrev();
+    });
   </script>
 
 </body>
