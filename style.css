@@ -123,6 +123,8 @@ body {
 
     font-family: 'Inter', sans-serif;
 
+    overflow-x: hidden;
+
     background:
         radial-gradient(
             circle at 15% 15%,
@@ -737,6 +739,7 @@ nav .btn:active {
 
 /* =========================================================
    HOME / HERO
+   (now boxed, like the Skills section)
    ========================================================= */
 
 .hero-section {
@@ -747,7 +750,7 @@ nav .btn:active {
 
     max-width: 1200px;
 
-    margin: auto;
+    margin: 40px auto;
 
     display: flex;
 
@@ -755,7 +758,17 @@ nav .btn:active {
 
     justify-content: center;
 
-    padding: 80px 0;
+    padding: 80px 55px;
+
+    background: var(--section-bg);
+
+    border: 1px solid var(--border);
+
+    border-radius: 25px;
+
+    backdrop-filter: blur(15px);
+
+    box-shadow: 0 20px 60px var(--shadow-color);
 }
 
 
@@ -860,9 +873,9 @@ nav .btn:active {
 
     position: relative;
 
-    width: 300px;
+    width: clamp(170px, 55vw, 300px);
 
-    height: 300px;
+    height: clamp(170px, 55vw, 300px);
 
     border-radius: 50%;
 
@@ -2150,7 +2163,7 @@ footer p {
 
     .hero-section {
 
-        padding-top: 40px;
+        padding: 60px 30px;
     }
 
 
@@ -2318,6 +2331,12 @@ footer p {
     }
 
 
+    .hero-section {
+
+        padding: 40px 18px;
+    }
+
+
     .home-text h2 {
 
         font-size: 43px;
@@ -2327,14 +2346,6 @@ footer p {
     .home-text p {
 
         font-size: 17px;
-    }
-
-
-    .profile-container {
-
-        width: 230px;
-
-        height: 230px;
     }
 
 
@@ -2360,6 +2371,18 @@ footer p {
         width: 100%;
 
         text-align: center;
+    }
+
+
+    .info-chip {
+
+        padding: 12px 10px 12px 14px;
+    }
+
+
+    .info-grid {
+
+        gap: 12px;
     }
 
 

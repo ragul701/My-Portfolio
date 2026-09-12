@@ -1,8 +1,12 @@
 // =========================================================
-// PROFILE IMAGE - PAGE LOAD
+// PAGE LOAD
 // =========================================================
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    // =====================================================
+    // PROFILE IMAGE
+    // =====================================================
 
     const savedImage =
         localStorage.getItem('profileImage');
@@ -10,11 +14,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const mainPhoto =
         document.getElementById('main-photo');
 
-
     if (savedImage && mainPhoto) {
-
         mainPhoto.src = savedImage;
-
     }
 
 
@@ -25,23 +26,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const themeToggle =
         document.getElementById('theme-toggle');
 
-
     const themeIcon =
         themeToggle
             ? themeToggle.querySelector('i')
             : null;
 
-
-    // Previously saved theme
     const savedTheme =
         localStorage.getItem('portfolio-theme');
 
-
-    // If light mode was saved
     if (savedTheme === 'light') {
-
         document.body.classList.add('light-mode');
-
     }
 
 
@@ -55,42 +49,25 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-
         const isLightMode =
             document.body.classList.contains('light-mode');
 
-
         if (isLightMode) {
 
-            // Light mode -> Moon icon
+            themeIcon.classList.remove('fa-sun');
 
-            themeIcon.classList.remove(
-                'fa-sun'
-            );
+            themeIcon.classList.add('fa-moon');
 
-            themeIcon.classList.add(
-                'fa-moon'
-            );
+        } else {
 
-        }
-        else {
+            themeIcon.classList.remove('fa-moon');
 
-            // Dark mode -> Sun icon
-
-            themeIcon.classList.remove(
-                'fa-moon'
-            );
-
-            themeIcon.classList.add(
-                'fa-sun'
-            );
+            themeIcon.classList.add('fa-sun');
 
         }
-
     }
 
 
-    // Initial icon
     updateThemeIcon();
 
 
@@ -108,14 +85,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     'light-mode'
                 );
 
-
                 const isLightMode =
                     document.body.classList.contains(
                         'light-mode'
                     );
 
-
-                // Save theme
                 localStorage.setItem(
                     'portfolio-theme',
                     isLightMode
@@ -123,14 +97,48 @@ document.addEventListener('DOMContentLoaded', function () {
                         : 'dark'
                 );
 
-
-                // Change icon
                 updateThemeIcon();
 
             }
         );
 
     }
+
+
+    // =====================================================
+    // NAVIGATION
+    // HOME / ABOUT / SKILLS / PROJECTS / CONTACT
+    // =====================================================
+
+    document.querySelectorAll('nav a[href^="#"]').forEach(
+        function (link) {
+
+            link.addEventListener(
+                'click',
+                function (event) {
+
+                    const targetId =
+                        link.getAttribute('href');
+
+                    const target =
+                        document.querySelector(targetId);
+
+                    if (!target) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+
+                }
+            );
+
+        }
+    );
 
 });
 
@@ -144,12 +152,10 @@ function resizeImage(file, maxSize, callback) {
     const reader =
         new FileReader();
 
-
     reader.onload = function (e) {
 
         const img =
             new Image();
-
 
         img.onload = function () {
 
@@ -161,6 +167,7 @@ function resizeImage(file, maxSize, callback) {
 
 
             // Maintain aspect ratio
+
             if (width > height) {
 
                 if (width > maxSize) {
@@ -173,11 +180,9 @@ function resizeImage(file, maxSize, callback) {
 
                     width =
                         maxSize;
-
                 }
 
-            }
-            else {
+            } else {
 
                 if (height > maxSize) {
 
@@ -189,18 +194,16 @@ function resizeImage(file, maxSize, callback) {
 
                     height =
                         maxSize;
-
                 }
-
             }
 
 
             // Canvas
+
             const canvas =
                 document.createElement(
                     'canvas'
                 );
-
 
             canvas.width =
                 width;
@@ -225,6 +228,7 @@ function resizeImage(file, maxSize, callback) {
 
 
             // Compress image
+
             const compressedData =
                 canvas.toDataURL(
                     'image/jpeg',
@@ -259,50 +263,50 @@ function changeProfilePic(event) {
     const file =
         event.target.files[0];
 
-
-    if (file) {
-
-        resizeImage(
-            file,
-            500,
-            function (compressedData) {
-
-                const mainPhoto =
-                    document.getElementById(
-                        'main-photo'
-                    );
+    if (!file) {
+        return;
+    }
 
 
-                if (mainPhoto) {
+    resizeImage(
+        file,
+        500,
+        function (compressedData) {
 
-                    mainPhoto.src =
-                        compressedData;
+            const mainPhoto =
+                document.getElementById(
+                    'main-photo'
+                );
 
-                }
 
+            if (mainPhoto) {
 
-                try {
-
-                    localStorage.setItem(
-                        'profileImage',
-                        compressedData
-                    );
-
-                }
-                catch (err) {
-
-                    alert(
-                        'Image romba periya irukku, konjam chinna image try pannunga.'
-                    );
-
-                    console.error(err);
-
-                }
+                mainPhoto.src =
+                    compressedData;
 
             }
-        );
 
-    }
+
+            try {
+
+                localStorage.setItem(
+                    'profileImage',
+                    compressedData
+                );
+
+            }
+            catch (err) {
+
+                alert(
+                    'Image romba periya irukku, konjam chinna image try pannunga.'
+                );
+
+                console.error(err);
+
+            }
+
+        }
+    );
 
 }
 
@@ -315,7 +319,6 @@ function addGalleryImages(event) {
 
     const files =
         event.target.files;
-
 
     const gallery =
         document.getElementById(
@@ -343,7 +346,6 @@ function addGalleryImages(event) {
 
                 img.src =
                     compressedData;
-
 
                 img.alt =
                     'Gallery Image';
